@@ -7,7 +7,7 @@ from multiprocessing import Pool
 import matplotlib.pyplot as plt
 
 # Q4
-mnist_data = sio.loadmat('Data/mnist_data.mat')
+mnist_data = sio.loadmat('data/mnist_data.mat')
 num_sample = 1000
 
 def l1(diff):
