@@ -39,7 +39,7 @@ def cal_error(train_file,test_file):
             w_given_spam = w_given_spam + value*np.log(train_dicts[0][key]/sum_spam)
             w_given_nospam = w_given_nospam + value*np.log(train_dicts[1][key]/sum_nospam)
 
-        if (w_given_spam>w_given_nospam and gt==-1) or (w_given_spam<w_given_nospam and gt==1):
+        if (w_given_spam>=w_given_nospam and gt==-1) or (w_given_spam<=w_given_nospam and gt==1):
             error_cnt = error_cnt + 1
     error = error_cnt / testReader.line_num *100
     #print ("Error Rate: %s %%" % error)
@@ -54,6 +54,7 @@ test_path = 'data/spam_classification/SPARSE.TEST'
 for i,n in enumerate(train_lst):
     error,_,_,_ = cal_error(train_path + n,test_path)
     error_lst.append(error)
+print (error_lst)
 plt.figure(1)
 plt.plot(train_n_lst,error_lst,marker='o',linestyle='-',color='r')
 plt.ylabel("Error Rate")
