@@ -13,54 +13,58 @@ num_dim = size(train_data,2);
 
 % Init
 wk = [0 0 0]';
-l = 0;
-
-test_err = [];
-train_err = [];
+l_prev = 1000;
+test_cost = [];
+train_cost = [];
 
 % Run iter
-for step=1:10
+cnt=0;
+for step=1:100
     
     h=0; grad=zeros(num_dim,1); hessian=zeros(num_dim,num_dim);
-    ll=0;
+    l_train=0; train_acc=0;
     for i=1:num_train
         x = train_data(i,:);
         y = train_labels(i);
         h = 1 / (1+exp( -dot(wk,x) ));
         grad = grad + (h - y)*x';
-        hessian = hessian + (h*(1-h))* x'*x;
-        
-        ll = ll - (y*log(h)+(1-y)*log(1-h));
+        hessian = hessian + h*(1-h)*(x')*x;
+        l_train = l_train - (y*log(h)+(1-y)*log(1-h));
+        train_acc = train_acc + double((h>=0.5 && y==1)||(h<=0.5 && y==0));
     end
-    wkk = wk - hessian'*grad; % update weight
+%     train_acc/num_train
+    train_cost = [ train_cost l_train ];
     
-    % Train & Test error
-    train_err = [ train_err ll ];
-    
+    % Test loss (cost)
     l_test = 0;
-    
-    for i=1:num_test
-        x = test_data(i,:);
-        y = test_labels(i);
-        h = 1 / (1+exp( -dot(wkk,x) ));
+    test_acc = 0;
+    for ii=1:num_test
+        x = test_data(ii,:);
+        y = test_labels(ii);
+        h = 1 / (1+exp( -dot(wk,x) ));
         l_test = l_test - (y*log(h)+(1-y)*log(1-h));
+        test_acc = test_acc + double((h>=0.5 && y==1)||(h<=0.5 && y==0));
     end
-    test_err = [ test_err l_test ];
+%     test_acc/num_test
+    test_cost = [ test_cost l_test ];    
     
-    % Compare loss
-    if norm(ll-l) < 1e-8 
-%     if norm(grad) < 1e-8
-        norm(ll-l);
+    % Coverage check (loss diff)
+    abs(l_train-l_prev)
+    if abs(l_train-l_prev) < 1e-8 
         break
     end
+
+    wk = wk - inv(hessian)*grad; cnt=cnt+1; % update weight
     
-    wk = wkk;
-    l = ll;
-    
+    l_prev = l_train;
 end
 
 % Draw
-wk
-step
-train_err
-test_err
+figure();
+plot(train_cost,'-bo','LineWidth',2)
+hold on;
+plot(test_cost,'-ro','LineWidth',2)
+hold off;
+legend('Train loss','Test loss')
+xlabel('Iteration')
+ylabel('Train/Test Loss')
