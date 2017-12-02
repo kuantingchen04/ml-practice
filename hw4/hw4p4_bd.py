@@ -61,10 +61,10 @@ for i in range(num_iter):
     lr = eta / (1 + i * eta)
     
     # Cal grad_w, grad_b
-    w_grad, b_grad = wt, 0
     permut = np.random.permutation(num_train)
     #for k,train_x in enumerate(train_data):
     for k in permut:
+        w_grad, b_grad = wt, 0
         train_x = train_data[k,:]
         train_y = get_y(train_labels[k])
         if train_y*( wt.dot(train_x) + bt ) < 1:
