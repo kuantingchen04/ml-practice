@@ -2,6 +2,7 @@ from pandas import read_csv
 from numpy.linalg import inv
 import numpy as np
 from scipy.spatial.distance import pdist, squareform
+from numpy import linalg as LA
 
 train_data = read_csv(
     'data/auto_mpg_train.csv',
@@ -86,7 +87,7 @@ K_inv = inv(K + np.identity(num_train))
 err = 0
 for i, data in enumerate(test_data):
     gnd_t = data[0]
-    kt = np.exp(- np.sum((train_x - data[1:]) ** 2, 1) / (2 * (1 ** 2)))
+    kt = np.exp(- np.sum((train_x - data[1:])**2, 1) / (2 * (1 ** 2)))
     pred = (train_y.T).dot(K_inv).dot(kt)
     err = err + (gnd_t - pred)**2
 err = np.sqrt(err / num_train)
