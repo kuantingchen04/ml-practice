@@ -44,25 +44,25 @@ p = 2
 K = (np.dot(train_x, train_x.T) + 1) ** p
 K_inv = inv(K + np.identity(num_train))
 err = 0
-for i, data in enumerate(train_data):
+for i, data in enumerate(test_data):
     gnd_t = data[0]
     kt = (train_x.dot(data[1:]) + 1) ** p
     pred = (train_y.T).dot(K_inv).dot(kt)
     err = err + (gnd_t - pred) ** 2
-err = np.sqrt(err / num_train)
+err = np.sqrt(err / num_test)
 print("Poly using p=%s: %s" % (p, err))
 
-# 2. Poly p=2,4,8
+## 2. Poly p=2,4,8
 p = 4
 K = (np.dot(train_x, train_x.T) + 1) ** p
 K_inv = inv(K + np.identity(num_train))
 err = 0
-for i, data in enumerate(train_data):
+for i, data in enumerate(test_data):
     gnd_t = data[0]
     kt = (train_x.dot(data[1:]) + 1) ** p
     pred = (train_y.T).dot(K_inv).dot(kt)
     err = err + (gnd_t - pred) ** 2
-err = np.sqrt(err / num_train)
+err = np.sqrt(err / num_test)
 print("Poly using p=%s: %s" % (p, err))
 
 # 3. Poly p=2,4,8
@@ -70,20 +70,21 @@ p = 8
 K = (np.dot(train_x, train_x.T) + 1) ** p
 K_inv = inv(K + np.identity(num_train))
 err = 0
-for i, data in enumerate(train_data):
+for i, data in enumerate(test_data):
     gnd_t = data[0]
     kt = (train_x.dot(data[1:]) + 1) ** p
     pred = (train_y.T).dot(K_inv).dot(kt)
     err = err + (gnd_t - pred) ** 2
-err = np.sqrt(err / num_train)
+err = np.sqrt(err / num_test)
 print("Poly using p=%s: %s" % (p, err))
 
+#
 # Gaussian
 pairwise_dists_mat = squareform(pdist(train_x, 'euclidean'))
 K = np.exp(-pairwise_dists_mat ** 2 / (2 * 1 ** 2))
 K_inv = inv(K + np.identity(num_train))
 err = 0
-for i, data in enumerate(train_data):
+for i, data in enumerate(test_data):
     gnd_t = data[0]
     kt = np.exp(- np.sum((train_x - data[1:]) ** 2, 1) / (2 * (1 ** 2)))
     pred = (train_y.T).dot(K_inv).dot(kt)
