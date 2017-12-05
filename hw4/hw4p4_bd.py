@@ -28,8 +28,10 @@ eta = 1e-3
 wt = np.zeros(dim_feature)
 bt = 0
 
-train_acc_gd = np.empty((num_epoch))
-train_acc_gd.fill(np.nan)
+val_type = "Train"
+val_labels, val_data = train_labels, train_data
+val_acc_gd = np.empty((num_epoch))
+val_acc_gd.fill(np.nan)
 for i in range(num_epoch):
     lr = eta / (1 + i * eta)
     
@@ -45,9 +47,9 @@ for i in range(num_epoch):
     btt = bt - lr * b_grad
 
     # Cal train acc
-    pred = train_labels.T * (train_data.dot(wtt) + btt)
-    acc = np.sum(pred >= 0) / num_train
-    train_acc_gd[i] = acc
+    pred = val_labels.T * (val_data.dot(wtt) + btt)
+    acc = np.sum(pred >= 0) / val_data.shape[0]
+    val_acc_gd[i] = acc
 
     # Check converge
     if LA.norm(wtt-wt)<1e-6:
@@ -62,8 +64,8 @@ for i in range(num_epoch):
 wt = np.zeros(dim_feature)
 bt = 0
 
-train_acc_sgd = np.empty((num_epoch))
-train_acc_sgd.fill(np.nan)
+val_acc_sgd = np.empty((num_epoch))
+val_acc_sgd.fill(np.nan)
 for i in range(num_epoch):
     lr = eta / (1 + i * eta)
     
@@ -82,9 +84,9 @@ for i in range(num_epoch):
         btt = btt - lr * b_grad
 
     # Cal train acc
-    pred = train_labels.T * (train_data.dot(wtt) + btt)
-    acc = np.sum(pred >= 0) / num_train
-    train_acc_sgd[i] = acc
+    pred = val_labels.T * (val_data.dot(wtt) + btt)
+    acc = np.sum(pred >= 0) / val_data.shape[0]
+    val_acc_sgd[i] = acc
 
     if LA.norm(wtt-wt)<1e-6:
         break
@@ -93,12 +95,12 @@ for i in range(num_epoch):
 
 num_plot = num_epoch
 plt.plot()
-#plt.plot(train_acc_gd[:numIter],'ro-',markersize=2)
-#plt.plot(train_acc_sgd[:numIter],'bo-',markersize=2)
-plt.plot(train_acc_gd[:num_plot],'r')
-plt.plot(train_acc_sgd[:num_plot],'b')
+#plt.plot(val_acc_gd[:numIter],'ro-',markersize=2)
+#plt.plot(val_acc_sgd[:numIter],'bo-',markersize=2)
+plt.plot(val_acc_gd[:num_plot],'r')
+plt.plot(val_acc_sgd[:num_plot],'b')
 plt.xlabel('Iteration (Epoch)')
-plt.ylabel('Train Acc')
+plt.ylabel('%s Acc' % val_type)
 plt.axis([0,num_plot,0.5,1])
 plt.legend(['BGD','SGD'])
 plt.show()
