@@ -71,7 +71,7 @@ for i in range(num_epoch):
     permut = np.random.permutation(num_train)
     wtt = wt
     for p_idx in permut:
-        w_grad, b_grad = wtt, 0
+        w_grad, b_grad = wtt / num_train, 0
         train_x = train_data[p_idx,:]
         train_y = train_labels[p_idx]
         if train_y*( wtt.dot(train_x) + bt ) < 1:
